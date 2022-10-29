@@ -1,18 +1,21 @@
 package zuulGame;
 
-import java.util.ArrayList;
-import java.util.Random;
-
-import zuulGame.Potions.Potions;
+import zuulGame.Inventory.Inventory;
+import zuulGame.Inventory.Potions.AttackPotion;
+import zuulGame.Inventory.Potions.HealthPotion;
+import zuulGame.Inventory.Potions.Potion;
+import zuulGame.Inventory.Weapons.Weapon;
 
 public class Player {
 	private String name;
 	private int hp;
-	private int damage;
+	private int maxHp;
+	private Weapon weapon;
+	private int baseDamage;
 	private int level;
 	private int exp;
 	private int expCap;
-	private ArrayList<Potions> inventory;
+	private Inventory inventory;
 
 	/**
 	 * Initialize the player object.
@@ -21,11 +24,13 @@ public class Player {
 	 */
 	public Player(String name) {
 		this.name = name;
-		inventory = new ArrayList<Potions>(10);
+		inventory = new Inventory();
+		baseDamage = 7;
+		weapon = null;
 		hp = 10;
-		damage = 1;
+		maxHp = hp;
 		level = 1;
-		exp = 0;
+		exp = 1;
 		expCap = level * 100;
 	}
 
@@ -49,11 +54,56 @@ public class Player {
 	 * @param newHp
 	 */
 	public void setHp(int newHp) {
-		hp = newHp;
+		maxHp = getMaxHp();
+		if (newHp > maxHp) {
+			hp = maxHp;
+		} else {
+			hp = newHp;
+		}
 	}
 
-	public void setAttack(int newDmg) {
-		damage += newDmg;
+	/**
+	 * @return players max hp
+	 */
+	public int getMaxHp() {
+		return maxHp;
+	}
+
+	/**
+	 * Set players max hp
+	 * 
+	 * @param newMaxHp
+	 */
+	public void setMaxHp(int newMaxHp) {
+		maxHp = newMaxHp;
+	}
+
+	public int getBaseDamage() {
+		return baseDamage;
+	}
+
+	public void setBaseDamage(int baseDamage) {
+		this.baseDamage = baseDamage;
+	}
+
+	public void increaseDmg(int dmgChange) {
+		baseDamage += dmgChange;
+	}
+
+	public void setWeapon(Weapon newWeapon) {
+		if (weapon != null) {
+			inventory.addItem(weapon);
+		}
+		weapon = newWeapon;
+		inventory.removeItem(weapon);
+	}
+
+	public Weapon getWeapon() {
+		return weapon;
+	}
+
+	public int getExp() {
+		return exp;
 	}
 
 	/**
@@ -64,42 +114,75 @@ public class Player {
 	 */
 	public void setExp(int amount) {
 		exp += amount;
-		if (exp > expCap) {
-			level++;
-			exp -= 100;
-			expCap = level * 100;
+		if (exp >= expCap) {
+			levelUp();
 		}
 	}
 
-	public ArrayList<Potions> getInventory() {
-		return inventory;
+	public int getExpCap() {
+		return expCap;
 	}
 
-	public void addToInventory(Potions potion) {
-		inventory.add(potion);
+	public void setExpCap(int newCap) {
+		expCap = newCap;
 	}
 
 	public int getLevel() {
 		return level;
 	}
 
-	/**
-	 * @return damage multiplied by a random number between 1 and 5.
-	 */
+	public Inventory getInventory() {
+		return inventory;
+	}
+
+	public void addToInventory(Object item) {
+		inventory.addItem(item);
+	}
+
+	public void removeFromInventory(Object item) {
+		inventory.removeItem(item);
+	}
+
+	public void levelUp() {
+		level++;
+		setMaxHp(getMaxHp() + 5);
+		setHp(getMaxHp());
+		increaseDmg(2);
+		setExpCap(level * 100);
+		expCap = getExpCap();
+		if (exp > expCap) {
+			exp -= expCap;
+		}
+	}
+
 	public int attack() {
-		Random rnd = new Random();
-		return damage + rnd.nextInt(1, 5);
+		if (weapon != null) {
+			return weapon.attack() + getBaseDamage();
+		} else {
+			return getBaseDamage();
+		}
 	}
 
-	public int getExp() {
-		return exp;
+	public void drinkPotion(Potion potion) {
+		if (potion instanceof HealthPotion) {
+			setHp(hp + potion.getIncrease());
+		} else if (potion instanceof AttackPotion) {
+			increaseDmg(potion.getIncrease());
+		}
+		inventory.removeItem(potion);
 	}
 
-	public int getDmg() {
-		return damage;
-	}
-
-	public void setDmg(int newDmg) {
-		damage = newDmg;
+	public void printStats() {
+		System.out.println("Name: " + getName());
+		System.out.println("Level: " + getLevel());
+		System.out.println("EXP: " + getExp() + "/" + getExpCap());
+		System.out.println("HP: " + getHp() + "/" + getMaxHp());
+		System.out.println("Damage: " + getBaseDamage());
+		if (weapon != null) {
+			System.out.println("Weapon: " + weapon.getName());
+			System.out.println("Weapon Damage: " + weapon.getMinDamage() + "-" + weapon.getMaxDamage());
+		} else {
+			System.out.println("Weapon: None");
+		}
 	}
 }

@@ -1,13 +1,16 @@
 package zuulGame;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-import zuulGame.Potions.AttackPotion;
-import zuulGame.Potions.HealthPotion;
-import zuulGame.Potions.Potions;
+import zuulGame.Inventory.Potions.AttackPotion;
+import zuulGame.Inventory.Potions.HealthPotion;
+import zuulGame.Inventory.Weapons.Bow;
+import zuulGame.Inventory.Weapons.Sword;
 
 public class Monster {
 	private int hp;
+	private int maxHp;
 	private int damage;
 	private int multiplier;
 
@@ -19,6 +22,7 @@ public class Monster {
 	public Monster(int multiplier) {
 		this.multiplier = multiplier;
 		hp = 10 + multiplier;
+		maxHp = hp;
 		damage = 1 + multiplier;
 	}
 
@@ -38,17 +42,25 @@ public class Monster {
 		hp = newHp;
 	}
 
-	public Potions genDrop() {
+	public ArrayList<Object> generateDrop() {
 		Random rnd = new Random();
-		Potions returnPotion = null;
-		if (rnd.nextBoolean()) {
+		ArrayList<Object> drop = new ArrayList<Object>();
+		int dropChance = rnd.nextInt(100);
+		if (dropChance < 25) {
+			drop.add(new HealthPotion(multiplier));
+		} else if (25 <= dropChance && dropChance < 50) {
+			drop.add(new AttackPotion(multiplier));
+		} else if (50 <= dropChance && dropChance < 75) {
+			drop.add(new HealthPotion(multiplier));
+			drop.add(new AttackPotion(multiplier));
+		} else if (75 <= dropChance && dropChance <= 100) {
 			if (rnd.nextBoolean()) {
-				returnPotion = new Potions(new HealthPotion(multiplier));
+				drop.add(new Sword(multiplier));
 			} else {
-				returnPotion = new Potions(new AttackPotion(multiplier));
+				drop.add(new Bow(multiplier));
 			}
 		}
-		return returnPotion;
+		return drop;
 	}
 
 	/**
@@ -56,6 +68,10 @@ public class Monster {
 	 */
 	public int attack() {
 		Random rnd = new Random();
-		return damage + rnd.nextInt(0, 4);
+		return damage + rnd.nextInt(0, 4) + multiplier;
+	}
+
+	public int getMaxHp() {
+		return maxHp;
 	}
 }

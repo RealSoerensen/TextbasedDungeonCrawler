@@ -1,10 +1,12 @@
 package zuulGame;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
-import zuulGame.Potions.Potions;
+import zuulGame.Inventory.Potions.Potion;
+import zuulGame.Inventory.Weapons.Weapon;
 
 /**
  *
@@ -17,11 +19,13 @@ public class Game {
 	static Monster monster;
 	static Scanner sc = new Scanner(System.in);
 
-	/**
-	 * Initializing the game object
-	 */
-	public void init() {
-		characterCreation();
+	public Game(boolean load) {
+		if (load) {
+			// TODO: Load game
+			characterCreation();
+		} else {
+			characterCreation();
+		}
 		gameStart();
 	}
 
@@ -32,37 +36,47 @@ public class Game {
 	 */
 	public void gameStart() {
 		int roundNum = 1;
+		System.out.println("Entering the dungeon, you see a monster in front of you.");
 		while (player.getHp() > 0) {
-			int multiplier = roundNum / 2;
+			int multiplier = roundNum;
 			room = new Room(multiplier);
 			monster = room.getMonster();
 			while (monster.getHp() > 0 && player.getHp() > 0) {
 				battle();
 			}
-			System.out.println("The battle has ended...");
+			System.out.println("The battle has ended.");
 			if (player.getHp() > 0) {
-				Potions drop = monster.genDrop();
-				if (drop != null) {
-					player.addToInventory(drop);
-					System.out.println("The monster dropped a " + drop.getPotionType());
+				ArrayList<Object> drop = monster.generateDrop();
+				for (Object item : drop) {
+					player.addToInventory(item);
+					System.out.println("You found a " + item.getClass().getSimpleName());
 				}
 				Random rnd = new Random();
-				int newExp = player.getExp() + rnd.nextInt(20, 40);
-				System.out.println("You gained " + (newExp - player.getExp()) + " exp!");
-				player.setExp(newExp);
+				int gainedExp = rnd.nextInt(70, 100);
+				System.out.println("You gained " + gainedExp + " exp!");
+				player.setExp(gainedExp);
 				roundNum++;
-				System.out.println("Proceeding to level " + roundNum);
+				postBattle();
 			}
 		}
-		System.out.println("You died... You reached round " + roundNum);
+		System.out.println("You died... \nYou reached round " + roundNum);
 	}
 
-	public static void battle() {
-		System.out.println("Do you want to (attack) or (consume) a potion?");
-		String choice = sc.nextLine();
+	private static void battle() {
+		System.out.println("\nMonster HP: " + monster.getHp() + "/" + monster.getMaxHp());
+		System.out.println("Your HP: " + player.getHp() + "/" + player.getMaxHp());
+		System.out.println("What do you want to do?");
+		System.out.println("1. Attack");
+		System.out.println("2. Open inventory");
+		System.out.println("3. Stats");
+		System.out.println("4. Save game");
+		System.out.println("5. Exit game");
+		System.out.print("> ");
+		int choice = takeInput();
+		System.out.println("\n");
+
 		switch (choice) {
-			case "attack":
-				int playerHealth = player.getHp();
+			case 1:
 				int monsterHealth = monster.getHp();
 				int playerDmg = player.attack();
 
@@ -70,62 +84,132 @@ public class Game {
 				monster.setHp(monsterHealth - playerDmg);
 				System.out.println("The monster now have " + monster.getHp() + "hp");
 
-				if (monster.getHp() >= 0) {
-					int monsterDmg = monster.attack();
-
-					System.out.println("The monster dealt " + monsterDmg);
-					player.setHp(playerHealth - monsterDmg);
-					System.out.println("You now have " + player.getHp() + "hp");
+				if (monster.getHp() > 0) {
+					monsterAttack();
 				}
 				break;
 
-			case "consume":
-				ArrayList<Potions> playerInventory = player.getInventory();
-				System.out.println("Enter a number to which item you want to use: ");
-				for (Potions potion : playerInventory) {
-					System.out.print(playerInventory.indexOf(potion) + ": " + potion.getPotionType());
-				}
-				System.out.println(playerInventory.size() + ": Back");
-				choice = sc.nextLine();
-				int newChoice = 0;
-				try {
-					newChoice = Integer.parseInt(choice);
-				} catch (NumberFormatException e) {
-					System.out.println("Please enter a number");
-					break;
-				}
-				if (newChoice == playerInventory.size()) {
-					break;
-				}
-				Potions pickedPotion = playerInventory.get(newChoice);
-				if (pickedPotion.getPotionType() == "Health Potion") {
-					int restoreHp = pickedPotion.getHealthPotion().drinkPotion() + player.getHp();
-					int newHp = 0;
-					if (restoreHp > 10) {
-						newHp = 10;
-					} else {
-						newHp = restoreHp;
-					}
-					player.setHp(newHp);
-				} else if (pickedPotion.getPotionType() == "Attack Potion") {
-					int newDmg = pickedPotion.getAttackPotion().drinkPotion() + player.getDmg();
-					player.setDmg(newDmg);
-				}
+			case 2:
+				inventoryMenu();
+				break;
+
+			case 3:
+				player.printStats();
+				break;
+
+			case 4:
+				System.out.println("Saving game...");
+				break;
+
+			case 5:
+				System.out.println("Exiting game...");
+				System.exit(0);
 				break;
 
 			default:
 				System.out.println("I didn'tunderstand that. Type either 'consume' or 'attack'.");
 		}
+	}
 
+	private void postBattle() {
+		boolean continueGame = false;
+		while (!continueGame) {
+			System.out.println("\nWhat do you want to do?");
+			System.out.println("1. Proceed to next room");
+			System.out.println("2. Open inventory");
+			System.out.println("3. Stats");
+			System.out.println("4. Save game");
+			System.out.println("5. Exit game");
+			System.out.print("> ");
+			int choice = takeInput();
+			System.out.println("\n");
+
+			switch (choice) {
+				case 1:
+					continueGame = true;
+					break;
+				case 2:
+					inventoryMenu();
+					continue;
+				case 3:
+					player.printStats();
+					continue;
+				case 4:
+					System.out.println("Saving game...");
+					continue;
+				case 5:
+					System.out.println("Exiting game...");
+					System.exit(0);
+					continue;
+				default:
+					System.out.println("I didn't understand that. Please enter a valid number.");
+			}
+		}
+	}
+
+	private static void inventoryMenu() {
+		ArrayList<Object> inventory = player.getInventory().getInventoryList();
+		String name = "";
+		int i = 1;
+		for (Object item : inventory) {
+			if (item instanceof Weapon) {
+				name = ((Weapon) item).getName();
+				int minDamage = ((Weapon) item).getMinDamage();
+				int maxDamage = ((Weapon) item).getMaxDamage();
+				System.out.println(i + ". " + name + " - " + minDamage + "-" + maxDamage + " damage");
+			} else if (item instanceof Potion) {
+				name = ((Potion) item).getName();
+				String description = ((Potion) item).getDescription();
+				System.out.println(i + ". " + name + " - " + description);
+			}
+			i++;
+		}
+		System.out.println(i + ". Back");
+		System.out.print("> ");
+
+		int choice = sc.nextInt();
+
+		if (choice == inventory.size() + 1) {
+			return;
+		}
+
+		Object item = inventory.get(choice - 1);
+		if (item instanceof Weapon) {
+			player.setWeapon((Weapon) item);
+			System.out.println("You equipped " + ((Weapon) item).getName());
+		} else if (item instanceof Potion) {
+			player.drinkPotion((Potion) item);
+			System.out.println("You consumed " + ((Potion) item).getName());
+		}
+		System.out.println("\n");
+	}
+
+	private static void monsterAttack() {
+		int monsterDmg = monster.attack();
+		int playerHealth = player.getHp();
+		System.out.println("The monster dealt " + monsterDmg);
+		player.setHp(playerHealth - monsterDmg);
+		System.out.println("You now have " + player.getHp() + "hp\n");
 	}
 
 	/**
 	 * Create the players character.
 	 */
-	public static void characterCreation() {
+	private static void characterCreation() {
 		System.out.println("Enter your characters name: ");
 		String name = sc.nextLine();
 		player = new Player(name);
-		System.out.println("Welcome " + player.getName() + "!");
+		System.out.println("Welcome " + player.getName() + "!\n");
+
+	}
+
+	private static int takeInput() {
+		try {
+			return sc.nextInt();
+		} catch (InputMismatchException e) {
+			System.out.println("Please enter a valid number.");
+			sc.next();
+			return takeInput();
+		}
 	}
 }
