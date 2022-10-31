@@ -1,22 +1,27 @@
-package zuulGame.Inventory.Weapons;
+package zuulGame.Items.Weapons;
 
 import java.util.Random;
 
-public class Sword implements Weapon {
+import zuulGame.Items.Weapon;
+
+public class Dagger implements Weapon {
     private int minDamage;
     private int maxDamage;
 
-    public Sword(int multiplier) {
-        minDamage = multiplier + 8;
-        maxDamage = multiplier + 10;
+    public Dagger(int multiplier) {
+        minDamage = multiplier + 6;
+        maxDamage = multiplier + 6;
     }
 
-    /**
-     * @return damage multiplied by a random number between 1 and 5.
-     */
+    @Override
     public int attack() {
         Random rnd = new Random();
         return rnd.nextInt(minDamage, maxDamage);
+    }
+
+    @Override
+    public String getName() {
+        return "Dagger";
     }
 
     @Override
@@ -27,10 +32,5 @@ public class Sword implements Weapon {
     @Override
     public int getMaxDamage() {
         return maxDamage;
-    }
-
-    @Override
-    public String getName() {
-        return "Sword";
     }
 }

@@ -3,10 +3,11 @@ package zuulGame;
 import java.util.ArrayList;
 import java.util.Random;
 
-import zuulGame.Inventory.Potions.AttackPotion;
-import zuulGame.Inventory.Potions.HealthPotion;
-import zuulGame.Inventory.Weapons.Bow;
-import zuulGame.Inventory.Weapons.Sword;
+import zuulGame.Items.Potions.AttackPotion;
+import zuulGame.Items.Potions.HealthPotion;
+import zuulGame.Items.Potions.MixedPotion;
+import zuulGame.Items.Weapons.Bow;
+import zuulGame.Items.Weapons.Sword;
 
 public class Monster {
 	private int hp;
@@ -51,8 +52,7 @@ public class Monster {
 		} else if (25 <= dropChance && dropChance < 50) {
 			drop.add(new AttackPotion(multiplier));
 		} else if (50 <= dropChance && dropChance < 75) {
-			drop.add(new HealthPotion(multiplier));
-			drop.add(new AttackPotion(multiplier));
+			drop.add(new MixedPotion(multiplier));
 		} else if (75 <= dropChance && dropChance <= 100) {
 			if (rnd.nextBoolean()) {
 				drop.add(new Sword(multiplier));

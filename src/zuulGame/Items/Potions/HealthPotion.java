@@ -1,4 +1,6 @@
-package zuulGame.Inventory.Potions;
+package zuulGame.Items.Potions;
+
+import zuulGame.Items.Potion;
 
 public class HealthPotion implements Potion {
 	private int health;

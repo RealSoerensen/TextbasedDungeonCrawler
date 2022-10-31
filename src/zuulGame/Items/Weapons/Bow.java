@@ -1,14 +1,16 @@
-package zuulGame.Inventory.Weapons;
+package zuulGame.Items.Weapons;
 
 import java.util.Random;
+
+import zuulGame.Items.Weapon;
 
 public class Bow implements Weapon {
     private int minDamage;
     private int maxDamage;
 
     public Bow(int multiplier) {
-        minDamage = multiplier + 5;
-        maxDamage = multiplier + 15;
+        minDamage = multiplier + 3;
+        maxDamage = multiplier + 10;
     }
 
     @Override
@@ -29,7 +31,6 @@ public class Bow implements Weapon {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
         return "Bow";
     }
 

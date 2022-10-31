@@ -5,8 +5,8 @@ import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
-import zuulGame.Inventory.Potions.Potion;
-import zuulGame.Inventory.Weapons.Weapon;
+import zuulGame.Items.Potion;
+import zuulGame.Items.Weapon;
 
 /**
  *

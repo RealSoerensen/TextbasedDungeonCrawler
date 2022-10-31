@@ -1,4 +1,4 @@
-package zuulGame.Inventory.Weapons;
+package zuulGame.Items;
 
 public interface Weapon {
     public int getMinDamage();

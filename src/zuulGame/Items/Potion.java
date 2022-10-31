@@ -1,4 +1,4 @@
-package zuulGame.Inventory.Potions;
+package zuulGame.Items;
 
 public interface Potion {
     public int getIncrease();

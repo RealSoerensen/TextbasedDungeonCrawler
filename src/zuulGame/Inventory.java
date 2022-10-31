@@ -1,4 +1,4 @@
-package zuulGame.Inventory;
+package zuulGame;
 
 import java.util.ArrayList;
 

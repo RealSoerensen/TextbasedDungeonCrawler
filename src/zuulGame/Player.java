@@ -1,10 +1,10 @@
 package zuulGame;
 
-import zuulGame.Inventory.Inventory;
-import zuulGame.Inventory.Potions.AttackPotion;
-import zuulGame.Inventory.Potions.HealthPotion;
-import zuulGame.Inventory.Potions.Potion;
-import zuulGame.Inventory.Weapons.Weapon;
+import zuulGame.Items.Potion;
+import zuulGame.Items.Weapon;
+import zuulGame.Items.Potions.AttackPotion;
+import zuulGame.Items.Potions.HealthPotion;
+import zuulGame.Items.Potions.MixedPotion;
 
 public class Player {
 	private String name;
@@ -167,6 +167,9 @@ public class Player {
 		if (potion instanceof HealthPotion) {
 			setHp(hp + potion.getIncrease());
 		} else if (potion instanceof AttackPotion) {
+			increaseDmg(potion.getIncrease());
+		} else if (potion instanceof MixedPotion) {
+			setHp(hp + potion.getIncrease());
 			increaseDmg(potion.getIncrease());
 		}
 		inventory.removeItem(potion);
