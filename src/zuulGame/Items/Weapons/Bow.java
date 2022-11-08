@@ -34,4 +34,9 @@ public class Bow implements Weapon {
         return "Bow";
     }
 
+    @Override
+    public Object getType() {
+        return this;
+    }
+
 }

@@ -3,6 +3,7 @@ package zuulGame;
 import java.util.ArrayList;
 import java.util.Random;
 
+import zuulGame.Items.Item;
 import zuulGame.Items.Potions.AttackPotion;
 import zuulGame.Items.Potions.HealthPotion;
 import zuulGame.Items.Potions.MixedPotion;
@@ -43,9 +44,9 @@ public class Monster {
 		hp = newHp;
 	}
 
-	public ArrayList<Object> generateDrop() {
+	public ArrayList<Item> generateDrop() {
 		Random rnd = new Random();
-		ArrayList<Object> drop = new ArrayList<Object>();
+		ArrayList<Item> drop = new ArrayList<Item>();
 		int dropChance = rnd.nextInt(100);
 		if (dropChance < 25) {
 			drop.add(new HealthPotion(multiplier));

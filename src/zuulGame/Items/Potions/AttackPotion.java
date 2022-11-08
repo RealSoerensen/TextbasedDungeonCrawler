@@ -23,4 +23,9 @@ public class AttackPotion implements Potion {
 	public String getDescription() {
 		return "Increases your attack by " + getIncrease() + ".";
 	}
+
+	@Override
+	public Object getType() {
+		return this;
+	}
 }

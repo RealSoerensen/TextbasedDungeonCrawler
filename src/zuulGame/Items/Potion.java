@@ -1,9 +1,7 @@
 package zuulGame.Items;
 
-public interface Potion {
+public interface Potion extends Item {
     public int getIncrease();
-
-    public String getName();
 
     public String getDescription();
 }

@@ -33,4 +33,9 @@ public class Dagger implements Weapon {
     public int getMaxDamage() {
         return maxDamage;
     }
+
+    @Override
+    public Object getType() {
+        return this;
+    }
 }

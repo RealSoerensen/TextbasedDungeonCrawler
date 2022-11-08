@@ -4,8 +4,6 @@ import zuulGame.Items.Potion;
 
 public class MixedPotion implements Potion {
     private int increase;
-    private String name;
-    private String description;
 
     public MixedPotion(int multiplier) {
         increase = multiplier + 15;
@@ -18,11 +16,16 @@ public class MixedPotion implements Potion {
 
     @Override
     public String getName() {
-        return name;
+        return "Mixed Potion";
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return "Heals you for " + getIncrease() + " health and increases your attack by " + getIncrease() + ".";
+    }
+
+    @Override
+    public Object getType() {
+        return this;
     }
 }

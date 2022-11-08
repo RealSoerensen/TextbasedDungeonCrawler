@@ -1,6 +1,6 @@
 package zuulGame.Items;
 
-public interface Weapon {
+public interface Weapon extends Item {
     public int getMinDamage();
 
     public int getMaxDamage();

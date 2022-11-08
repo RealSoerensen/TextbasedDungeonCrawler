@@ -3,6 +3,7 @@ package zuulGame;
 import java.util.ArrayList;
 import java.util.Random;
 
+import zuulGame.Items.Item;
 import zuulGame.Items.Potion;
 import zuulGame.Items.Weapon;
 import zuulGame.Items.Potions.AttackPotion;
@@ -13,7 +14,7 @@ import zuulGame.Items.Weapons.Dagger;
 import zuulGame.Items.Weapons.Sword;
 
 public class Shop {
-    private ArrayList<Object> shopInventory;
+    private ArrayList<Item> shopInventory;
     private int multiplier;
     Potion allPotions[] = { new HealthPotion(multiplier), new AttackPotion(multiplier),
             new MixedPotion(multiplier) };
@@ -24,18 +25,18 @@ public class Shop {
      */
     public Shop(int multiplier) {
         this.multiplier = multiplier;
-        shopInventory = new ArrayList<Object>();
+        shopInventory = new ArrayList<Item>();
         for (int i = 0; i < 5; i++) {
             shopInventory.add(getRandomObject());
         }
     }
 
-    public ArrayList<Object> getShopInventory() {
+    public ArrayList<Item> getShopInventory() {
         return shopInventory;
     }
 
-    public void buyItem(Object item) {
-        for (Object itemInShop : shopInventory) {
+    public void buyItem(Item item) {
+        for (Item itemInShop : shopInventory) {
             if (itemInShop.equals(item)) {
                 shopInventory.remove(itemInShop);
                 return;
@@ -43,11 +44,11 @@ public class Shop {
         }
     }
 
-    public void sellItem(Object item) {
+    public void sellItem(Item item) {
         shopInventory.add(item);
     }
 
-    public Object getRandomObject() {
+    public Item getRandomObject() {
         Random rnd = new Random();
         if (rnd.nextBoolean()) {
             return allPotions[rnd.nextInt(allPotions.length)];

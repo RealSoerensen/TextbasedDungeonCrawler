@@ -5,6 +5,7 @@ import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
+import zuulGame.Items.Item;
 import zuulGame.Items.Potion;
 import zuulGame.Items.Weapon;
 
@@ -46,8 +47,8 @@ public class Game {
 			}
 			System.out.println("The battle has ended.");
 			if (player.getHp() > 0) {
-				ArrayList<Object> drop = monster.generateDrop();
-				for (Object item : drop) {
+				ArrayList<Item> drop = monster.generateDrop();
+				for (Item item : drop) {
 					player.addToInventory(item);
 					System.out.println("You found a " + item.getClass().getSimpleName());
 				}
@@ -148,19 +149,29 @@ public class Game {
 	}
 
 	private static void inventoryMenu() {
-		ArrayList<Object> inventory = player.getInventory().getInventoryList();
+		ArrayList<Item> inventory = player.getInventory().getInventoryList();
 		String name = "";
 		int i = 1;
-		for (Object item : inventory) {
-			if (item instanceof Weapon) {
-				name = ((Weapon) item).getName();
-				int minDamage = ((Weapon) item).getMinDamage();
-				int maxDamage = ((Weapon) item).getMaxDamage();
+		for (Item item : inventory) {
+			// Get datatype of item
+			Object type = item.getType();
+			if (type instanceof Weapon) {
+				Weapon weapon = (Weapon) item;
+				name = weapon.getName();
+				int minDamage = weapon.getMinDamage();
+				int maxDamage = weapon.getMaxDamage();
 				System.out.println(i + ". " + name + " - " + minDamage + "-" + maxDamage + " damage");
-			} else if (item instanceof Potion) {
-				name = ((Potion) item).getName();
-				String description = ((Potion) item).getDescription();
+			}
+
+			else if (type instanceof Potion) {
+				Potion potion = (Potion) item;
+				name = potion.getName();
+				String description = potion.getDescription();
 				System.out.println(i + ". " + name + " - " + description);
+			}
+
+			else {
+				System.out.println("Item not recognized");
 			}
 			i++;
 		}

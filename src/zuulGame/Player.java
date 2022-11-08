@@ -1,5 +1,6 @@
 package zuulGame;
 
+import zuulGame.Items.Item;
 import zuulGame.Items.Potion;
 import zuulGame.Items.Weapon;
 import zuulGame.Items.Potions.AttackPotion;
@@ -135,11 +136,11 @@ public class Player {
 		return inventory;
 	}
 
-	public void addToInventory(Object item) {
+	public void addToInventory(Item item) {
 		inventory.addItem(item);
 	}
 
-	public void removeFromInventory(Object item) {
+	public void removeFromInventory(Item item) {
 		inventory.removeItem(item);
 	}
 
